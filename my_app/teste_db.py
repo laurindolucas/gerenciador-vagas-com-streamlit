@@ -1,9 +1,13 @@
-from sqlalchemy import text
 from db.connection import SessionLocal
+from db.models import TipoVeiculo
 
 session = SessionLocal()
 
-result = session.execute(text("SELECT 1"))
-print(result.fetchone())
+carro = TipoVeiculo(nome="Carro")
+session.add(carro)
+session.commit()
+
+result = session.query(TipoVeiculo).all()
+print([t.nome for t in result])
 
 session.close()

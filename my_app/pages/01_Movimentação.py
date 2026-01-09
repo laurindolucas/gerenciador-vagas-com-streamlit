@@ -1,7 +1,19 @@
 import streamlit as st
+from db.connection import SessionLocal
+from db.models import Vaga, Estacionamento
 
-st.set_page_config(
-    page_title="home page"
+st.title("🅿️ Vagas")
+
+session = SessionLocal()
+
+vagas = (
+    session.query(Vaga)
+    .join(Estacionamento)
+    .all()
 )
 
-st.title("Essa pagina sera de cadastro")
+for vaga in vagas:
+    status = "🟥 Ocupada" if vaga.ocupada else "🟩 Livre"
+    st.write(f"Vaga {vaga.codigo} - {status}")
+
+session.close()
