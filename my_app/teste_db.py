@@ -3,7 +3,7 @@ from db.models import TipoVeiculo
 
 session = SessionLocal()
 
-carro = TipoVeiculo(nome="Carro")
+carro = TipoVeiculo(nome="Kombi")
 session.add(carro)
 session.commit()
 
