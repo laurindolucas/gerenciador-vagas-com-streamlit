@@ -6,7 +6,7 @@ O projeto tem como objetivo simular o controle de um estacionamento, permitindo 
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **Python**
 - **Streamlit** – Interface web
@@ -24,4 +24,31 @@ O projeto tem como objetivo simular o controle de um estacionamento, permitindo 
 git clone https://github.com/laurindolucas/gerenciador-vagas-com-streamlit.git
 cd gerenciador-vagas-com-streamlit
 ```
+
+### 2️⃣ Crie e ative o ambiente virtual `(.venv)`
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### 3️⃣ Instale as dependências
+Com o ambiente virtual ativado, instale as bibliotecas necessárias:
+```bash
+pip install streamlit python-dotenv sqlalchemy psycopg2-binary
+```
+### 4️⃣ Configure as variáveis de ambiente
+Crie um arquivo `.env` na raiz do projeto e adicione a URL de conexão com o banco do Supabase:
+```bash
+pip install streamlit python-dotenv sqlalchemy psycopg2-binary
+```
+#### Importante:
+Nunca suba o arquivo .env para o GitHub.
+Adicione-o ao .gitignore.
+
+### 5️⃣ Execute a aplicação
+```bash
+streamlit run app.py
+```
+
+
 
