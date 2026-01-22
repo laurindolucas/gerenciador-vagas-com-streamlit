@@ -39,7 +39,7 @@ pip install streamlit python-dotenv sqlalchemy psycopg2-binary
 ### 4️⃣ Configure as variáveis de ambiente
 Crie um arquivo `.env` na raiz do projeto e adicione a URL de conexão com o banco do Supabase:
 ```bash
-pip install streamlit python-dotenv sqlalchemy psycopg2-binary
+DATABASE_URL = suaurl
 ```
 #### Importante:
 Nunca suba o arquivo .env para o GitHub.
