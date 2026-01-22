@@ -1,7 +1,7 @@
 
 import streamlit as st 
 from db.connection import SessionLocal 
-from db.models import Estacionamento, Vaga
+from db.models import *
 import pandas as pd
 from datetime import time
 
@@ -83,3 +83,51 @@ editor_tabela = st.data_editor(tabela_config_tarifas, num_rows="dynamic")
 
 confirm_tarifas = st.container(horizontal=True, horizontal_alignment="center")
 salvar_tarifas = confirm_tarifas.button("Confirmar configuração das tarifas")
+
+if salvar_tarifas:
+    if not st.session_state["estacionamento_id"]:
+        st.error("Crie o estacionamento antes de configurar as tarifas.")
+        st.stop()
+
+    session = SessionLocal()
+
+    try:
+        for _, row in editor_tabela.iterrows():
+            nome_tipo = row["Tipos De Veiculos"].strip()
+            valor_hora = row["Valor por hora"]
+            tolerancia = row["Minutos de Tolerancia"]
+
+            tipo = session.query(TipoVeiculo).filter_by(nome=nome_tipo).first()
+
+            if not tipo:
+                tipo = TipoVeiculo(nome=nome_tipo)
+                session.add(tipo)
+                session.flush()  
+
+            # -----------------------------
+            tarifa = session.query(Tarifa).filter_by(
+                estacionamento_id=st.session_state["estacionamento_id"],
+                tipo_veiculo_id=tipo.id
+            ).first()
+
+            if tarifa:
+                tarifa.valor_hora = valor_hora
+                tarifa.tolerancia_minutos = tolerancia
+            else:
+                nova_tarifa = Tarifa(
+                    estacionamento_id=st.session_state["estacionamento_id"],
+                    tipo_veiculo_id=tipo.id,
+                    valor_hora=valor_hora,
+                    tolerancia_minutos=tolerancia
+                )
+                session.add(nova_tarifa)
+
+        session.commit()
+        st.success("Tipos de veículos e tarifas configurados com sucesso!")
+
+    except Exception as e:
+        session.rollback()
+        st.error(f"Erro ao salvar configurações: {e}")
+
+    finally:
+        session.close()
