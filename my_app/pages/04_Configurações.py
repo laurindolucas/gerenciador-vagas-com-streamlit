@@ -5,7 +5,7 @@ from db.models import *
 import pandas as pd
 from datetime import time
 
-if "estacionamento_id" not in st.session_state:
+if "estacionamento_id" not   in st.session_state:
     st.session_state["estacionamento_id"] = None
 
 st.title("Configurações do Estacionamento")
@@ -25,7 +25,7 @@ with col1:
     )
 with col2:
     totalVagas= st.number_input(
-        "Digite o total de vagas do Estacionamento:",        step=1   
+        "Digite o total de vagas do Estacionamento:",step=1   
     )
     statusAtivo= st.selectbox(
         "O Estacionamento está ativo?", 
@@ -104,7 +104,6 @@ if salvar_tarifas:
                 session.add(tipo)
                 session.flush()  
 
-            # -----------------------------
             tarifa = session.query(Tarifa).filter_by(
                 estacionamento_id=st.session_state["estacionamento_id"],
                 tipo_veiculo_id=tipo.id
