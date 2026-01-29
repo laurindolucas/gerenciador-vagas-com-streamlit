@@ -14,6 +14,24 @@ from sqlalchemy.sql import func
 Base = declarative_base()
 
 
+# ============================
+# USUÁRIO (LOGIN)
+# ============================
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(120), unique=True, nullable=False)
+    senha_hash = Column(String(255), nullable=False)
+    ativo = Column(Boolean, default=True)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
+
+    estacionamentos = relationship("Estacionamento", back_populates="usuario")
+
+
+# ============================
+# TIPO VEÍCULO
+# ============================
 class TipoVeiculo(Base):
     __tablename__ = "tipos_veiculos"
 
@@ -24,6 +42,9 @@ class TipoVeiculo(Base):
     tarifas = relationship("Tarifa", back_populates="tipo")
 
 
+# ============================
+# ESTACIONAMENTO
+# ============================
 class Estacionamento(Base):
     __tablename__ = "estacionamentos"
 
@@ -32,14 +53,22 @@ class Estacionamento(Base):
     endereco = Column(String)
     total_vagas = Column(Integer, nullable=False)
     ativo = Column(Boolean, default=True)
+
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
+    usuario = relationship("Usuario", back_populates="estacionamentos")
     vagas = relationship("Vaga", back_populates="estacionamento")
     tarifas = relationship("Tarifa", back_populates="estacionamento")
 
 
+# ============================
+# VAGA
+# ============================
 class Vaga(Base):
     __tablename__ = "vagas"
+
     __table_args__ = (
         UniqueConstraint("codigo", "estacionamento_id"),
     )
@@ -55,8 +84,12 @@ class Vaga(Base):
     tipos_aceitos = relationship("VagaTipoVeiculo", back_populates="vaga")
 
 
+# ============================
+# VAGA x TIPO
+# ============================
 class VagaTipoVeiculo(Base):
     __tablename__ = "vaga_tipos_veiculos"
+
     __table_args__ = (
         UniqueConstraint("vaga_id", "tipo_veiculo_id"),
     )
@@ -69,6 +102,9 @@ class VagaTipoVeiculo(Base):
     tipo = relationship("TipoVeiculo")
 
 
+# ============================
+# VEÍCULO
+# ============================
 class Veiculo(Base):
     __tablename__ = "veiculos"
 
@@ -78,13 +114,18 @@ class Veiculo(Base):
     cor = Column(String(30))
     proprietario = Column(String(100))
     num_proprietario = Column(String(100))
+
     tipo_veiculo_id = Column(Integer, ForeignKey("tipos_veiculos.id"), nullable=False)
+
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     tipo = relationship("TipoVeiculo", back_populates="veiculos")
     movimentacoes = relationship("Movimentacao", back_populates="veiculo")
 
 
+# ============================
+# MOVIMENTAÇÃO
+# ============================
 class Movimentacao(Base):
     __tablename__ = "movimentacoes"
 
@@ -96,21 +137,33 @@ class Movimentacao(Base):
     saida = Column(TIMESTAMP(timezone=True))
     valor_pago = Column(Numeric(10, 2))
     status = Column(String(20), default="aberto")
+
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     veiculo = relationship("Veiculo", back_populates="movimentacoes")
     vaga = relationship("Vaga", back_populates="movimentacoes")
 
 
+# ============================
+# TARIFA
+# ============================
 class Tarifa(Base):
     __tablename__ = "tarifas"
+
     __table_args__ = (
         UniqueConstraint("estacionamento_id", "tipo_veiculo_id"),
     )
 
     id = Column(Integer, primary_key=True)
-    estacionamento_id = Column(Integer, ForeignKey("estacionamentos.id"), nullable=False)
-    tipo_veiculo_id = Column(Integer, ForeignKey("tipos_veiculos.id"), nullable=False)
+
+    estacionamento_id = Column(
+        Integer, ForeignKey("estacionamentos.id"), nullable=False
+    )
+
+    tipo_veiculo_id = Column(
+        Integer, ForeignKey("tipos_veiculos.id"), nullable=False
+    )
+
     valor_hora = Column(Numeric(10, 2), nullable=False)
     tolerancia_minutos = Column(Integer, default=10)
 
