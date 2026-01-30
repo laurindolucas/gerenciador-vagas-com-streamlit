@@ -5,6 +5,10 @@ from db.models import *
 import pandas as pd
 from datetime import time
 
+if "usuario_id" not in st.session_state:
+    st.error("Faça login para acessar esta página")
+    st.stop()
+
 if "estacionamento_id" not   in st.session_state:
     st.session_state["estacionamento_id"] = None
 
@@ -48,7 +52,8 @@ if botao:
             nome=nomeEstacionamento,
             endereco=enderecoEstacionamento,
             total_vagas=int(totalVagas),
-            ativo=True if statusAtivo == "Sim" else False
+            ativo=True if statusAtivo == "Sim" else False,
+            usuario_id=st.session_state["usuario_id"]
         )
         session.add(estacionamento)
         session.commit()
