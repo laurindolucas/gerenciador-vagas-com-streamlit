@@ -1,7 +1,6 @@
 import streamlit as st 
 from db.connection import SessionLocal 
-from db.models import Vaga, Estacionamento
-import pandas as pd
+from db.models import *
 
 
 if "usuario_id" not in st.session_state:
@@ -48,4 +47,21 @@ with col2:
 confirmarButton= st.container(horizontal=True, horizontal_alignment="center")
 
 botao = confirmarButton.button("Cadastar")
+
+if botao:
     
+    if proprietario_carro == "" or placa_carro == "" or cor_carro == "" or numero_proprietario == "" or modelo_carro == "":
+        st.error("Dados inválidos! por favor preencha as informações corretamente.")
+    else:
+        session = SessionLocal()
+        veiculo = Veiculo(
+            placa=placa_carro,
+            modelo=modelo_carro,
+            cor=cor_carro,
+            proprietario=proprietario_carro,
+            num_proprietario=numero_proprietario,
+            tipo_veiculo_id={"Carro": 1, "Moto": 2, "Caminhão": 3, "Ônibus": 4, "Outro": 5}[tipo_Veiculo]
+        )
+        session.add(veiculo)
+        session.commit()
+        st.success("Veículo cadastrado com sucesso!")

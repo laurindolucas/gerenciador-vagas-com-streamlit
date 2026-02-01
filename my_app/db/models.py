@@ -132,7 +132,6 @@ class Movimentacao(Base):
     id = Column(Integer, primary_key=True)
     veiculo_id = Column(Integer, ForeignKey("veiculos.id"), nullable=False)
     vaga_id = Column(Integer, ForeignKey("vagas.id"), nullable=False)
-
     entrada = Column(TIMESTAMP(timezone=True), nullable=False)
     saida = Column(TIMESTAMP(timezone=True))
     valor_pago = Column(Numeric(10, 2))
