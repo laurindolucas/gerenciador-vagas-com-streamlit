@@ -3,6 +3,11 @@ from db.connection import SessionLocal
 from db.models import Vaga, Estacionamento
 import pandas as pd
 
+
+if "usuario_id" not in st.session_state:
+    st.error("Faça login para acessar esta página")
+    st.stop()
+
 st.title("Primeiros Cadastros")
 st.write("Faça o primeiro cadastro de veiculos aqui")
 
